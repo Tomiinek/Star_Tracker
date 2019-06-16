@@ -29,13 +29,13 @@
 #define ACCEL_DELAY_DEC         100     // decreased by ACCEL_DELAY_DEC (should be even)
 #define FAST_DELAY_START_DEC    1400    // 1400 us, ~714 Hz
 #define FAST_DELAY_END_DEC      800     //  800 us, 1250 Hz
-#define SLOW_DELAY_DEC          10000 // 100746  // 15 degrees per hour, exactly 9.9259259259 Hz for MS 4
+#define SLOW_DELAY_DEC          40000   // 100746  // 15 degrees per hour, exactly 9.9259259259 Hz for MS 4
 
 #define ACCEL_STEPS_RA          200     // every ACCEL_STEPS_RA steps is the delay 
 #define ACCEL_DELAY_RA          100     // decreased by ACCEL_DELAY_RA (should be even)
 #define FAST_DELAY_START_RA     1400    // 1400 us, ~714 Hz
 #define FAST_DELAY_END_RA       800     //  800 us, 1250 Hz
-#define SLOW_DELAY_RA           50373 // 50373   // 15 degrees per hour, exactly 9.9259259259/2 Hz for MS 4
+#define SLOW_DELAY_RA           50373   // 50373   // 15 degrees per hour, exactly 9.9259259259/2 Hz for MS 4
 
 
 

@@ -19,14 +19,10 @@ void loop() {
   static long last = 0;
 
   if (mc->is_ready() && (long)millis() - last > 1000) {
-    //Serial.println((long)millis() - last);
     delay(5000);
     last = millis();    
     mc->turn(angle, angle, false, false);
     angle *= -1;
-    //Serial.println("New command invoked!");
-
-    // TODO: test stop()
   }
 
   delay(10);

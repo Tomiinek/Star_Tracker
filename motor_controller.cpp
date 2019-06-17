@@ -85,7 +85,7 @@ void MotorController::turn(float angle_dec, float angle_ra, bool fast = true, bo
 
     // wait 1ms for pins to stabilize if needed
     if (change_pin(DIR_PIN_DEC, angle_dec > 0) | 
-        change_pin(DIR_PIN_RA,  angle_ra > 0) |
+        change_pin(DIR_PIN_RA,  angle_ra > 0)  |
         change_pin(MS_PIN_DEC, !fast) |
         change_pin(MS_PIN_RA,  !fast)) delay(1);
 
@@ -181,16 +181,15 @@ void MotorController::trigger() {
 
 void MotorController::motor_trigger(motor_data& data, byte pin) {
 
-    if (data.pulses_remaining > 0 && data.ticks_passed++ >= data.mcu_ticks_per_pulse) {
-        if (data.pulses_to_correction != 0 && 
-            data.pulses_remaining_correction == data.pulses_to_correction) {
-            data.pulses_remaining_correction = 0;
-        } else {                
-            --data.pulses_remaining;  
-            ++data.pulses_remaining_correction;
-        }
-        ++data.pulses_remaining_accel;
-        data.ticks_passed = 0;
-        MOTORS_PORT ^= (1 << pin);
+    if (data.pulses_remaining == 0 || ++data.ticks_passed < data.mcu_ticks_per_pulse) return;
+
+    if (data.pulses_to_correction != 0 && ++data.pulses_remaining_correction == data.pulses_to_correction) {
+        data.pulses_to_correction = 0;
+    } else {
+        --data.pulses_remaining;
     }
+
+    ++data.pulses_remaining_accel;
+    data.ticks_passed = 0;
+    MOTORS_PORT ^= (1 << pin);
 }

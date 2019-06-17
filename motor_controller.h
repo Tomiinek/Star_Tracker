@@ -45,8 +45,8 @@ class MotorController {
       volatile uint32_t pulses_to_correction = 0;
       volatile uint32_t mcu_ticks_per_pulse = 0; 
       volatile uint32_t pulses_remaining_accel = 0;
-      volatile uint16_t target_steps_delay = 0;
-      volatile uint16_t current_steps_delay = 0;
+      volatile uint32_t target_steps_delay = 0;
+      volatile uint32_t current_steps_delay = 0;
       volatile uint32_t ticks_passed = 0;
     };
 

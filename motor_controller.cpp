@@ -34,6 +34,11 @@ void MotorController::initialize() {
         Serial.print("  TCCR1B: "); Serial.println(TCCR1B, BIN);
         Serial.print("  TIMSK1: "); Serial.println(TIMSK1, BIN);
     #endif
+
+    _commands = queue<command_t>(8);
+
+    _dec_balance = 0;
+    _ra_balance = 0;
 }
 
 void MotorController::stop() {
@@ -57,23 +62,32 @@ void MotorController::stop() {
     #ifdef DEBUG
         Serial.print("  PORT:   "); Serial.println(MOTORS_PORT, BIN);
     #endif
+
+    _commands.clear();
 }
 
-void MotorController::turn(float angle_dec, float angle_ra, bool fast = true, bool over_ride = false) {
+void MotorController::fast_turn(float revs_dec, float revs_ra, boolean queueing) {
+    turn_internal({revs_dec, revs_ra, FAST_DELAY_START_DEC, FAST_DELAY_START_RA, FAST_DELAY_END_DEC, FAST_DELAY_END_RA, false}, queueing);
+}
 
-    #ifdef DEBUG
-        Serial.println("Checking if steppers are ready:");
-        Serial.print("  DEC: "); Serial.println(_dec.pulses_remaining);
-        Serial.print("  RA:  "); Serial.println(_ra.pulses_remaining);
-    #endif
+void MotorController::slow_turn(float revs_dec, float revs_ra, float speed_dec, float speed_ra, boolean queueing) {
+    long delay_dec = 1000000.0 / (speed_dec * STEPS_PER_REV_DEC * MICROSTEPPING_MUL);
+    long delay_ra  = 1000000.0 / (speed_ra  * STEPS_PER_REV_RA  * MICROSTEPPING_MUL);
+    turn_internal({revs_dec, revs_ra, delay_dec, delay_ra, delay_dec, delay_ra, true}, queueing);
+}
 
-    if (!over_ride && !is_ready()) return;
+void MotorController::turn_internal(command_t cmd, bool queueing) {
+
+    if (queueing && !is_ready()) {
+        _commands.push(cmd);
+        return;
+    }
 
     #ifdef DEBUG
         Serial.println("Initializing new movement.");
-        Serial.print("  angle DEC:      "); Serial.println(angle_dec);
-        Serial.print("  angle RA:       "); Serial.println(angle_ra);
-        Serial.print("  micro s. (t/f): "); Serial.println(fast ? "disabled" : "enabled");
+        Serial.print("  revs DEC:       "); Serial.println(cmd.revs_dec);
+        Serial.print("  resv RA:        "); Serial.println(cmd.revs_ra);
+        Serial.print("  micro s. (t/f): "); Serial.println(cmd.microstepping ? "enabled" : "disabled");
     #endif
 
     #ifdef DEBUG
@@ -84,37 +98,26 @@ void MotorController::turn(float angle_dec, float angle_ra, bool fast = true, bo
     cli();
 
     // wait 1ms for pins to stabilize if needed
-    if (change_pin(DIR_PIN_DEC, angle_dec > 0) | 
-        change_pin(DIR_PIN_RA,  angle_ra > 0)  |
-        change_pin(MS_PIN_DEC, !fast) |
-        change_pin(MS_PIN_RA,  !fast)) delay(1);
+    if (change_pin(DIR_PIN_DEC, (cmd.revs_dec > 0 && DIRECTION_DEC) || (cmd.revs_dec < 0 && !DIRECTION_DEC)) | 
+        change_pin(DIR_PIN_RA,  (cmd.revs_ra  > 0 && DIRECTION_RA)  || (cmd.revs_ra  < 0 && !DIRECTION_RA))  |
+        change_pin(MS_PIN_DEC, cmd.microstepping) |
+        change_pin(MS_PIN_RA,  cmd.microstepping)) delay(1);
 
     #ifdef DEBUG
         Serial.print(" ---> "); Serial.println(MOTORS_PORT, BIN);
     #endif
 
-    unsigned long steps_dec = abs(angle_dec) / DEG_PER_MOUNT_REV_DEC * REDUCTION_RATIO_DEC * STEPS_PER_REV_DEC;
-    unsigned long steps_ra  = abs(angle_ra)  / DEG_PER_MOUNT_REV_RA  * REDUCTION_RATIO_RA  * STEPS_PER_REV_RA;
+    unsigned long steps_dec = abs(cmd.revs_dec) * STEPS_PER_REV_DEC * (cmd.microstepping ? MICROSTEPPING_MUL : 1);
+    unsigned long steps_ra  = abs(cmd.revs_ra)  * STEPS_PER_REV_RA  * (cmd.microstepping ? MICROSTEPPING_MUL : 1);
 
     _dec.pulses_remaining_accel = 0;
     _ra.pulses_remaining_accel  = 0;
 
-    if (fast) {
-        _dec.target_steps_delay = FAST_DELAY_END_DEC;
-        _ra.target_steps_delay  = FAST_DELAY_END_RA;
-        step_micros(_dec, steps_dec, FAST_DELAY_START_DEC);
-        step_micros(_ra,  steps_ra, FAST_DELAY_START_RA);
-    }
-    else {
-
-        // TODO: compute delay for slow movement properly. Based on the real orientation of mount.
-        // TODO: 1000000/((15/60/60)*(200*8*4/2.68656716418))
-
-        _dec.target_steps_delay = SLOW_DELAY_DEC;
-        _ra.target_steps_delay  = SLOW_DELAY_RA;
-        step_micros(_dec, steps_dec * MICROSTEPPING_MUL, _dec.target_steps_delay);
-        step_micros(_ra,  steps_ra * MICROSTEPPING_MUL, _ra.target_steps_delay);
-    }
+    _dec.target_steps_delay = cmd.delay_end_dec;
+    _ra.target_steps_delay  = cmd.delay_end_ra;
+    
+    step_micros(_dec, steps_dec, cmd.delay_start_dec);
+    step_micros(_ra,  steps_ra, cmd.delay_start_ra);
 
     TCNT1 = 0; // reset Timer1 counter
 
@@ -141,7 +144,7 @@ void MotorController::step_micros(motor_data& data, long steps, long micros_betw
     float mcu_ticks_per_pulse = micros_between_steps / 2.0 / TMR1_RESOLUTION;
 
     #ifdef DEBUG
-        Serial.println("MCU ticks per one pulse (us):");
+        Serial.println("MCU ticks per one pulse:");
         Serial.print("  "); Serial.println(mcu_ticks_per_pulse); 
     #endif
 
@@ -160,11 +163,15 @@ void MotorController::step_micros(motor_data& data, long steps, long micros_betw
 
 void MotorController::trigger() {
 
+    if (_ra.pulses_remaining == 0 && _dec.pulses_remaining == 0 && _commands.count() > 0) {
+        turn_internal(_commands.pop(), false);
+    }
+
     // DEC motor pulse should be done
-    motor_trigger(_dec, STEP_PIN_DEC);
+    _dec_balance += motor_trigger(_dec, STEP_PIN_DEC, DIR_PIN_DEC, DIRECTION_DEC, MS_PIN_DEC);
 
     // RA motor pulse should be done
-    motor_trigger(_ra, STEP_PIN_RA);
+    _ra_balance += motor_trigger(_ra, STEP_PIN_RA, DIR_PIN_RA, DIRECTION_RA, MS_PIN_RA);
     
     bool accel_desired_dec = (_dec.current_steps_delay > _dec.target_steps_delay && _dec.pulses_remaining_accel == ACCEL_STEPS_DEC / 2);
     bool accel_desired_ra  = (_ra.current_steps_delay  > _ra.target_steps_delay  && _ra.pulses_remaining_accel  == ACCEL_STEPS_RA  / 2);
@@ -179,9 +186,9 @@ void MotorController::trigger() {
     }
 }
 
-void MotorController::motor_trigger(motor_data& data, byte pin) {
+int MotorController::motor_trigger(motor_data& data, byte pin, byte dir, byte dir_swap, byte ms) {
 
-    if (data.pulses_remaining == 0 || ++data.ticks_passed < data.mcu_ticks_per_pulse) return;
+    if (data.pulses_remaining == 0 || ++data.ticks_passed < data.mcu_ticks_per_pulse) return 0;
 
     if (data.pulses_to_correction != 0 && ++data.pulses_remaining_correction == data.pulses_to_correction) {
         data.pulses_to_correction = 0;
@@ -192,4 +199,6 @@ void MotorController::motor_trigger(motor_data& data, byte pin) {
     ++data.pulses_remaining_accel;
     data.ticks_passed = 0;
     MOTORS_PORT ^= (1 << pin);
+
+    return (MOTORS_PORT & (1 << ms) ? 1 : MICROSTEPPING_MUL) * ((MOTORS_PORT & (1 << dir)) ^ !dir_swap ? 1 : -1);
 }

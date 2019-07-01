@@ -1,0 +1,129 @@
+body {
+    margin-top: 50px;
+    background: black;
+    color: red;
+    font-family: Arial;
+}
+
+div.center {
+
+    margin: 0 auto;
+    max-width: 390px;
+
+}
+
+#bar {
+
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 40px;
+    border-bottom: solid 1px red;
+    width: 100%;
+
+}
+
+.menu {
+
+    clear: both;
+    height: 40px;
+    margin-top: 15px;
+
+}
+
+.menu > div, .button {
+
+    display: inline-block;
+    border: solid 1px red;
+    padding: 5px 15px;
+    cursor: pointer;
+
+}
+
+.menu > div.active, .button.active {
+
+    background: red;
+    color:black;
+
+}
+
+.menu > div.right, .button.right {
+
+    float: right;
+    margin-left: 10px;
+
+}
+
+.menu > div.left, .button.left {
+
+    float: left;
+    margin-right: 10px;
+
+}
+
+.coordinates {
+    float: right;
+}
+
+.coordinates > span {
+    width: 90px;
+    display: inline-block;
+    text-align: right;
+}
+
+.controls { 
+    position: relative;
+    margin: 5px 0 10px 0;
+    clear: both;
+}
+
+.controls > img {
+    width: 100%;
+}
+
+.controls > div {
+    position: absolute;
+    cursor: pointer;
+}
+
+.controls > .lrg_h {
+    width: 74%;
+    left: 13%;
+    height: 13%;
+}
+.controls > .mdm_h {
+    width: 44%;
+    left: 27.5%;
+    height: 13%;
+}
+.controls > .sml_h {
+    width: 18%;
+    left: 40.5%;
+    height: 13%;
+}
+.controls > .lrg_v {
+    height: 74%;
+    top: 13%;
+    width: 13%;
+}
+.controls > .mdm_v {
+    height: 44%;
+    top: 27.5%;
+    width: 13%;
+}
+.controls > .sml_v {
+    height: 18%;
+    top: 40.5%;
+    width: 13%;
+}
+
+input {
+
+  background: none;
+  border: solid 1px red;
+  color: red;
+  width: 70px;
+  padding: 3px 5px;
+  font-size: 1.2em;
+
+}

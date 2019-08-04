@@ -1,7 +1,7 @@
 #ifndef CAMERACONTROLLER_H
 #define CAMERACONTROLLER_H
 
-#include "config.h"
+#include "../config.h"
 
 class CameraController {
   
@@ -14,27 +14,34 @@ class CameraController {
             reset();
         }
 
-        // triggers single shooting, camera dependent, should have specific implementation
+        // triggers shooting, camera dependent, should have specific implementation
         // cannot be blocking because of long exposures, timers are overkill as we do not
         // need to be very precise in this scenario
+        // should take into account repeating snaps (like burst mode) with delay between them
+        virtual void shoot(int duration, int delay) = 0;
         // returns true while is shooting, false otherwise
-        virtual boolean shoot(int duration) = 0;
+        virtual boolean update() = 0; 
 
         // immediately stop all shutter releasing activity and reset counter
         inline void reset() {
-            digitalWrite(TRIGGER_PIN, HIGH);
+            stop();
             _last_invoked = 0;
             _last_duration = 0;
-            _repeated = 0;
+            _last_delay = 0;
         }
 
-        inline int get_repetition_num() { return _repeated; }
+        inline void set_repeating(boolean repeating) { _repeating = repeating; }
+        inline bool get_repeating() { return _repeating; }
 
     protected:
 
-        long _last_invoked;
-        long _last_duration;
-        int _repeated;
+        // stop shooting
+        virtual void stop() = 0;
+
+        unsigned long _last_invoked = 0;
+        unsigned long _last_duration = 0;
+        unsigned long _last_delay = 0;
+        boolean _repeating = false;
 };
 
 #endif

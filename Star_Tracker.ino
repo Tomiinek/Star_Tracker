@@ -1,30 +1,36 @@
+#include "src/config.h"
+#include "src/control/control.h"
 
-#include "config.h"
-#include "motor_controller.h"
+#include "src/core/motor_controller.h"
 
-MotorController* mc;
+#include "src/core/camera_controller.h"
+#include "src/core/canon_eos1000d.h"
+
+#include "src/core/clock.h"
+#include "src/core/rtc_ds3231.h"
+
+RtcDS3231 ds3231;
+Clock& clock = ds3231;
+
+CanonEOS1000D eos;
+CameraController& camera = eos; 
+
+MountController mount(MotorController::instance());
+
+Control control(mount, camera, clock);
 
 void setup() {
-  delay(1); 
-  Serial.begin(115200);
-  delay(100); 
-  mc = &MotorController::instance();
-  mc->initialize();
-  delay(100); 
+
+  Serial.begin(SERIAL_BAUD_RATE);
+  delay(10);
+  control.initialize();
+  delay(100);
+
 }
 
-void loop() { 
+void loop() {
 
-  static float angle = 5.0f;
-  static long last = 0;
-
-  if (mc->is_ready() && (long)millis() - last > 1000) {
-    delay(5000);
-    last = millis();    
-    mc->turn(angle, angle, false, false);
-    angle *= -1;
-  }
-
+  control.update();
   delay(10);
 
 }

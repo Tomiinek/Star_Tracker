@@ -3,8 +3,10 @@
 
 #include <math.h>
 #include <Time.h>
-#include "config.h"
+
+#include "../config.h"
 #include "motor_controller.h"
+#include "clock.h"
 
 class MountController {
   
@@ -28,6 +30,17 @@ class MountController {
     // initialize stepper motors, default values, call from setup!
     void initialize();
 
+    inline void get_mount_pole(coord_t& pole, deg_t& ra_offset) {
+        pole = _mount_pole;
+        ra_offset = _mount_ra_offset;
+    }  
+    inline void set_mount_pole(coord_t pole, deg_t ra_offset) {
+        _transition = make_transition_matrix(pole, ra_offset);
+        _transition_inverse = make_inverse_transition_matrix(pole, ra_offset);
+        _mount_pole = pole;
+        _mount_ra_offset = ra_offset;
+    }
+
     // orientation of mount in the global equatorial coordinates (DEC, RA)
     coord_t get_global_mount_orientation();
 
@@ -35,7 +48,10 @@ class MountController {
     coord_t get_local_mount_orientation();
 
     // calibration of mount pole
-    void all_star_alignment();
+    void all_star_alignment(coord_t kernel[], coord_t image[], uint8_t points_num);
+
+    // same as move_absolute method but with JToDate correction of J2000 cordinates
+    void move_absolute_J2000(deg_t angle_dec, deg_t angle_ra);
 
     // moves the mount in order to point at the target in absolute coordinates (at max speed)
     void move_absolute(deg_t angle_dec, deg_t angle_ra);
@@ -63,6 +79,16 @@ class MountController {
 
     // check whether we are tracking something
     inline boolean is_tracking() { return _is_tracking; }
+
+    static float to_time_global_ra(float ra) {
+        // see _mount_pole comments in for the explanation of 180-...
+        return fmod(180 - ra +  15 * Clock::get_decimal_LST(), 360);
+    }
+
+    static float to_future_global_ra(float ra, float decimal_future_hours) {
+        // see _mount_pole comments in for the explanation of 180-...
+        return fmod(180 - ra +  15 * (Clock::get_decimal_LST() + decimal_future_hours), 360);
+    }
 
   private:
 
@@ -98,12 +124,18 @@ class MountController {
         }
     };
 
-    // compute local siderial time, precision of few seconds
-    double get_LST();
+    inline float to_deg(float rad) { return rad / M_PI * 180; }
+    inline float to_rad(float deg) { return deg / 180 * M_PI; }
 
-    inline float to_deg(float rad) { return rad / 2 / M_PI * 360; }
+    coord_t angle_to_revolutions(coord_t angles) {
+        return { angles.dec * REDUCTION_RATIO_DEC / DEG_PER_MOUNT_REV_DEC,
+                 angles.ra  * REDUCTION_RATIO_RA  / DEG_PER_MOUNT_REV_RA };
+    }
 
-    inline float to_rad(float deg) { return deg / 360 * 2 * M_PI; }
+    coord_t revolutions_to_angle(coord_t revolutions) {
+        return { revolutions.dec * DEG_PER_MOUNT_REV_DEC / REDUCTION_RATIO_DEC,
+                 revolutions.ra  * DEG_PER_MOUNT_REV_RA  / REDUCTION_RATIO_RA };
+    }
 
     inline float to_180_range(float angle) {
         if (angle >  180) angle -= 360;
@@ -148,6 +180,9 @@ class MountController {
     // angular speed in the global coordinates 0 deg/s DEC and 'ra_speed' deg/s RA. USE ONLY FOR SMALL 
     // TRANSFORMS NEARBY THE REAL GLOBAL POLE.
     coord_t get_ra_speed_transform(deg_t ra_speed, float t, coord_t point, coord_t pole, deg_t ra_offset);
+
+    // returns a number from standard normal distribution using transform from uniform distribution
+    float random_normal();
 
     boolean _is_tracking;
 

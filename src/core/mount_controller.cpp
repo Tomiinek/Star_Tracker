@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <float.h>
+
 #include "mount_controller.h"
 
 void MountController::initialize() {
@@ -65,7 +66,8 @@ MountController::coord_t MountController::get_local_mount_orientation() {
 void MountController::all_star_alignment(coord_t kernel[], coord_t image[], uint8_t points_num) {
 
     // Should work similarly to Celestron All-star alignment
-    // Simple evolutionary strategy for optimization
+    // Simple evolutionary strategy for optimization, which is slow :(
+    // TODO: better analytical solution
 
     #ifdef DEBUG_MOUNT
         Serial.println(F("All start alignment:"));
@@ -165,7 +167,7 @@ void MountController::move_absolute_J2000(deg_t angle_dec, deg_t angle_ra) {
 
     // Equations from Astrophysical Fomulae: Volume II page 18
     // accuracy of few arc seconds
-    // it would be worth it to use an exact precession matrix like Stellarium does 
+    // it could be worth it to use an exact precession matrix like Stellarium does 
 
     if (angle_dec < -90 || angle_dec > 90 || angle_ra < 0 || angle_ra >= 360) return;
 
@@ -361,6 +363,8 @@ MountController::cartesian_t MountController::polar_to_cartesian(coord_t polar) 
 
 MountController::coord_t MountController::cartesian_to_polar(cartesian_t cartesian) {
 
+    // TODO: this function should be rewritten to reach a better precision (asin)
+
     double ra = to_deg(atan2(cartesian.y, cartesian.x));
     if (ra < 0) ra += 360;
        
@@ -419,23 +423,23 @@ float MountController::random_normal() {
 
     static const long rnd_max = 1000000;
 
-	static float z1;
-	static bool generate;
-	generate = !generate;
+    static float z1;
+    static bool generate;
+    generate = !generate;
 
-	if (!generate) return z1;
+    if (!generate) return z1;
 
-	float u1, u2;
-	do {
-	    u1 = random(0, rnd_max) / (float)rnd_max;
-	    u2 = random(0, rnd_max) / (float)rnd_max;
-	}
-	while (u1 <= FLT_MIN);
+    float u1, u2;
+    do {
+        u1 = random(0, rnd_max) / (float)rnd_max;
+        u2 = random(0, rnd_max) / (float)rnd_max;
+    }
+    while (u1 <= FLT_MIN);
 
-	float z0;
+    float z0;
     float s = sqrt(-2.0f * log(u1));
-	z0 = s * cos(2.0f * 3.14159265358f * u2);
-	z1 = s * sin(2.0f * 3.14159265358f * u2);
+    z0 = s * cos(2.0f * 3.14159265358f * u2);
+    z1 = s * sin(2.0f * 3.14159265358f * u2);
 
-	return z0;
+    return z0;
 }

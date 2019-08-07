@@ -8,16 +8,11 @@
 
 class SubSecondRTC : public RTC_Millis {
     public:
-        static void adjust(const DateTime& dt) {
-            RTC_Millis::adjust(dt);
-        }
-        static void adjust(uint32_t t = SECONDS_FROM_1970_TO_2000) {
-            RTC_Millis::adjust(DateTime(t));
-        }
+        static void adjust(const DateTime& dt) { RTC_Millis::adjust(dt); }
+        static void adjust(uint32_t t = SECONDS_FROM_1970_TO_2000) { RTC_Millis::adjust(DateTime(t)); }
         static void adjust(uint16_t year, uint8_t month, uint8_t day, uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0) {
             RTC_Millis::adjust(DateTime(year, month, day, hour, min, sec));
-        }
-        
+        }      
         static uint32_t sub_second_millis() { return millis() - lastMillis; } 
 };
 
@@ -31,15 +26,19 @@ class Clock  {
         // adjust internal clocks and synchronize RTC module if needed
         virtual void sync(const DateTime& dt) = 0;
 
+        // returns current datetime
         static DateTime get_time() { return _time.now(); }
 
+        // returns current datetime in decimal format with subsecond precision
         static double get_decimal_time() { 
             auto dt = _time.now();
             return dt.hour() + dt.minute() / 60.0 + ((float)dt.second() + _time.sub_second_millis() / 1000.0) / 3600.0;
         }
 
+        // returns current local siderial time with precission of seconds
         static DateTime get_LST() { return _time.now() + _local_siderial_time_offset; }
 
+        // returns current local siderial time with subsecond precission in decimal format
         static double get_decimal_LST() { 
             auto dt = _time.now() + _local_siderial_time_offset;
             return dt.hour() + dt.minute() / 60.0 + ((float)dt.second() + _time.sub_second_millis() / 1000.0f) / 3600.0f;   
@@ -47,7 +46,7 @@ class Clock  {
 
     protected:
 
-        // compute local siderial time, precision of few seconds
+        // compute local siderial time, precision of few arc seconds
         static TimeSpan compute_LST_offset() {
 
             // Arduino cannot handle 64 bit floats so this
@@ -90,4 +89,4 @@ class Clock  {
         static TimeSpan     _local_siderial_time_offset;
 };
 
-#endif REALTIMECLOCK_H
+#endif

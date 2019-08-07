@@ -162,7 +162,6 @@ void Display::render_goto_info(bool refresh) {
 
     _lcd.setCursor(0, 1); 
     _lcd.print(F("coord (to date):")); 
-
 }
 
 void Display::render_goto(bool refresh, ControlSubState phase, int ra[3], int dec[3]) {
@@ -183,7 +182,6 @@ void Display::render_goto(bool refresh, ControlSubState phase, int ra[3], int de
     if (phase == ControlSubState::S3) print_blinking(3, 1, dec[0], 3);      
     if (phase == ControlSubState::S4) print_blinking(9, 1, dec[1], 2);
     if (phase == ControlSubState::S5) print_blinking(13, 1, dec[2], 2);
-
 }
 
 void Display::render_camera(bool refresh, bool repeating) {
@@ -226,7 +224,6 @@ void Display::render_camera_settings(bool refresh, ControlSubState phase, int ti
             
     if (phase == ControlSubState::S1 || phase == ControlSubState::S3) print_blinking(DSP_COLS - 1 - 4, 0, time, 4);
     if (phase == ControlSubState::S2 || phase == ControlSubState::S4) print_blinking(DSP_COLS - 1 - 4, 1, delay, 4);
-
 }
 
 void Display::render_time(bool refresh, ControlSubState phase, int y, int m, int d, int h, int i, int s) {
@@ -425,7 +422,9 @@ void Display::render_catalogue_results(bool refresh, ControlSubState phase, int 
 }
 
 void Display::render_wait(bool refresh) {
+
     if (!refresh) return;
+
     _lcd.clear();
     _lcd.setCursor(0, 0); 
     _lcd.print(F("Please wait ...")); 
@@ -437,7 +436,9 @@ void Display::render_wait(bool refresh) {
 }
 
 void Display::render_not_found(bool refresh) {
+
     if (!refresh) return;
+
     _lcd.clear(); 
     _lcd.setCursor(0, 0); 
     _lcd.print(F("Not found ...")); 
@@ -492,7 +493,9 @@ void Display::print_coords(int dec[3], int ra[3], int start_col) {
 }
 
 void Display::print_blinking(int col, int row, int value, int characters) {
+    
     _lcd.setCursor(col, row);
+    
     if (_blink) print_padded(value, characters);
     else {
         int i = 0;

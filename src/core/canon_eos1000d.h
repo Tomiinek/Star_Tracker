@@ -22,10 +22,10 @@ class CanonEOS1000D : public CameraController {
         }
 
         boolean update() override {
+            
             long from_last_snap = millis() - _last_invoked;
 
             if (from_last_snap < _last_duration) return true;
-
             if (from_last_snap < _last_duration + SNAP_DELAY_MS) {
                 int curr_state = digitalRead(TRIGGER_PIN);
                 if (curr_state == HIGH) digitalWrite(TRIGGER_PIN, LOW);  
@@ -48,4 +48,3 @@ class CanonEOS1000D : public CameraController {
 };
 
 #endif
-

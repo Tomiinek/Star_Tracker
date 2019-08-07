@@ -51,144 +51,144 @@
 //	=================================
 //	=================================
 
-#define INFO_SCREEN_MS       1500 	// how long whould be an intermediate screen displayed
+#define INFO_SCREEN_MS       1500 	// how long will be an intermediate (informative) screen displayed
 
 enum ControlSubState : short { S0 = 0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11 };
 
 class Control {
 
-  	public:
+      public:
 
-	  	enum State { MAIN, HELP, GOTO, CALIB, CATALOG, SHOOT, TIME, POSITION, BRIGHT };
+        enum State { MAIN, HELP, GOTO, CALIB, CATALOG, SHOOT, TIME, POSITION, BRIGHT };
 
-		Control(MountController& mount, CameraController& camera, Clock& clock)
-			: _mount(mount), _camera(camera), _clock(clock) {}
+        Control(MountController& mount, CameraController& camera, Clock& clock)
+            : _mount(mount), _camera(camera), _clock(clock) {}
 
-		// initialise display, camera, mount, clock and SD card
-		void initialize();
+        // initialize display, camera, mount, clock and SD card
+        void initialize();
 
-		// updates state of the overall controller, proper menus are displayed and actions 
-		// based on done keypad actions are performed
-		void update();
+        // updates state of the overall controller, proper menus are displayed and actions 
+        // based on done keypad actions are performed
+        void update();
 
-	private:
+    private:
 
-		// save a variable to EEPROM
-		template <class T> 
-  		void save(T value, uint16_t adress) {
-			byte* p = (byte*)(void*)&value;
-			for (int i = 0; i < sizeof(value); i++) EEPROM.write(adress++, *p++);
-		}
+        // save a variable to EEPROM
+        template <class T> 
+          void save(T value, uint16_t adress) {
+            byte* p = (byte*)(void*)&value;
+            for (int i = 0; i < sizeof(value); i++) EEPROM.write(adress++, *p++);
+        }
 
-		template <class T>
-		void load(T& target, uint16_t adress, T lower, T upper, T default_value) {
-			load(target, adress);
-			if (target >= lower && target <= upper) return; // NaN returns false for all comp.
-			target = default_value;
-		}
+        template <class T>
+        void load(T& target, uint16_t adress, T lower, T upper, T default_value) {
+            load(target, adress);
+            if (target >= lower && target <= upper) return; // NaN returns false for all comp.
+            target = default_value;
+        }
 
-		template <class T>
-		void load(T& target, uint16_t adress) {
-			byte* p = (byte*)(void*)&target;
-			for (int i = 0; i < sizeof(target); i++) *p++ = EEPROM.read(adress++);
-		}
+        template <class T>
+        void load(T& target, uint16_t adress) {
+            byte* p = (byte*)(void*)&target;
+            for (int i = 0; i < sizeof(target); i++) *p++ = EEPROM.read(adress++);
+        }
 
-		// display global position, facilitate manual controll and motors stopping
-		void main_menu();
+        // display global position, facilitate manual controll and motors stopping
+        void main_menu();
 
-		// display current position
-		void position_menu();
+        // display current position
+        void position_menu();
 
-		// brightness settings
-		void brightness_menu();
+        // brightness settings
+        void brightness_menu();
 
-		// selection of a target postiion
-		void goto_menu();
+        // selection of a target postiion
+        void goto_menu();
 
-		// handling camera settings, stopping
-		void camera_menu();
+        // handling camera settings, stopping
+        void camera_menu();
 
-		// time adjustment
-		void time_menu();
+        // time adjustment
+        void time_menu();
 
-		// overall control of the calibration procedure
-		void calibration_menu();
+        // overall control of the calibration procedure
+        void calibration_menu();
 
-		// catalogue search
-		void catalogue_menu();
+        // catalogue search
+        void catalogue_menu();
 
-		void help_menu();
+        void help_menu();
 
-		void manual_control(ControlSubState nothing, ControlSubState degrees, ControlSubState minutes, ControlSubState seconds);
+        void manual_control(ControlSubState nothing, ControlSubState degrees, ControlSubState minutes, ControlSubState seconds);
 
-		void clear_position_buffers();
+        void clear_position_buffers();
 
-		void add_digit(int& number, int digit, int min, int max);
+        void add_digit(int& number, int digit, int min, int max);
 
-		// returns pushed digit or -1 if no key was pushed or 10 is zero was pressed for longer a
-		// longer time (which is used in this code to alter sign of the number being specified)
-		int get_pushed_digit();
+        // returns pushed digit or -1 if no key was pushed or 10 is zero was pressed for longer a
+        // longer time (which is used in this code to alter sign of the number being specified)
+        int get_pushed_digit();
 
-		// search in a catalogue file on the SD card for the specified object with number 'object'
-		bool find_in_catalogue(ControlSubState catalogue, int object, MountController::coord_t& coords, 
-							   float& magnitude, float& size_a, float& size_b, char type[5]);
+        // search in a catalogue file on the SD card for the specified object with number 'object'
+        bool find_in_catalogue(ControlSubState catalogue, int object, MountController::coord_t& coords, 
+                               float& magnitude, float& size_a, float& size_b, char type[5]);
 
-		inline MountController::coord_t position_buffers_to_coords() {
-			return MountController::coord_t {
-				 _ra_buffer[0] +  _ra_buffer[1] / 60.0f +  _ra_buffer[2] / 3600.0f,
-				_dec_buffer[0] + _dec_buffer[1] / 60.0f + _dec_buffer[2] / 3600.0f,
-			};
-		}
+        inline MountController::coord_t position_buffers_to_coords() {
+            return MountController::coord_t {
+                 _ra_buffer[0] +  _ra_buffer[1] / 60.0f +  _ra_buffer[2] / 3600.0f,
+                _dec_buffer[0] + _dec_buffer[1] / 60.0f + _dec_buffer[2] / 3600.0f,
+            };
+        }
 
-		inline void change_state(State new_state) {
-			_state = new_state;
-			_substate = ControlSubState::S0;
-			_substate_changed = false;
-			_state_changed = true;
-			_last_substate_change_time = millis();
-		}
+        inline void change_state(State new_state) {
+            _state = new_state;
+            _substate = ControlSubState::S0;
+            _substate_changed = false;
+            _state_changed = true;
+            _last_substate_change_time = millis();
+        }
 
-		inline void change_substate(ControlSubState new_state) {
-			_substate = new_state;
-			_substate_changed = true;
-		}
+        inline void change_substate(ControlSubState new_state) {
+            _substate = new_state;
+            _substate_changed = true;
+        }
 
-		inline ControlSubState increment_substate() {
-			return static_cast<ControlSubState>(static_cast<uint8_t>(_substate)+1);
-		}
+        inline ControlSubState increment_substate() {
+            return static_cast<ControlSubState>(static_cast<uint8_t>(_substate)+1);
+        }
 
-		State _state;
-		ControlSubState _substate;
-		bool _state_changed = false;
-		bool _substate_changed = false;
-		bool _last_state_changed = false;
-		bool _last_substate_changed = false;
-		unsigned long _last_substate_change_time = 0;
+        State _state;
+        ControlSubState _substate;
+        bool _state_changed = false;
+        bool _substate_changed = false;
+        bool _last_state_changed = false;
+        bool _last_substate_changed = false;
+        unsigned long _last_substate_change_time = 0;
 
-		int _ra_buffer[3];
-		int _dec_buffer[3];
-		int _time[6];
+        int _ra_buffer[3];
+        int _dec_buffer[3];
+        int _time[6];
 
-		int _shooting_time_buffer = 123;
-		int _shooting_delay_buffer = 123;
+        int _shooting_time_buffer = 123;
+        int _shooting_delay_buffer = 123;
 
-		int _catalogue_buffer = 0;
+        int _catalogue_buffer = 0;
 
-		int _brightness_buffer = 128;
+        int _brightness_buffer = 128;
 
-		SDClass* _sd;
+        SDClass* _sd;
 
-		Display _display;
-		Keypad _keypad;
-		
-		Clock& _clock;
-		MountController& _mount;
-		CameraController& _camera;
+        Display _display;
+        Keypad _keypad;
+        
+        Clock& _clock;
+        MountController& _mount;
+        CameraController& _camera;
 
-		uint8_t _calibration_buffer_size = 0;
-		MountController::coord_t _kernel;
-		MountController::coord_t _kernel_buffer[CAL_BUFFER_SIZE];
-		MountController::coord_t _image_buffer[CAL_BUFFER_SIZE];
+        uint8_t _calibration_buffer_size = 0;
+        MountController::coord_t _kernel;
+        MountController::coord_t _kernel_buffer[CAL_BUFFER_SIZE];
+        MountController::coord_t _image_buffer[CAL_BUFFER_SIZE];
 };
 
 #endif

@@ -12,17 +12,8 @@ class MountController {
   public:
 
     using deg_t = float;
-
-    struct coord_t {
-        float dec;
-        float ra;
-    };
-
-    struct cartesian_t {
-        float x;
-        float y;
-        float z;
-    };
+    struct coord_t { float dec; float ra; };
+    struct cartesian_t { float x; float y; float z; };
 
     MountController(MotorController& mc) : _motors(mc) {}
 
@@ -33,6 +24,8 @@ class MountController {
         pole = _mount_pole;
         ra_offset = _mount_ra_offset;
     }  
+
+    // set mount pole to point at global equatorial coordinates 'pole' with a RA offset of 'ra_offset' degrees 
     inline void set_mount_pole(coord_t pole, deg_t ra_offset) {
         _transition = make_transition_matrix(pole, ra_offset);
         _transition_inverse = make_inverse_transition_matrix(pole, ra_offset);
@@ -154,12 +147,13 @@ class MountController {
     // converts cartesian to spherical coordinates with unit radius
     coord_t cartesian_to_polar(cartesian_t cartesian);
 
+    // make the transition matrix which is a product of three rotations
     matrix_t make_transition_matrix(coord_t pole, float ra_offset) {
         return get_ra_transition(ra_offset) * 
                get_dec_transition(pole.dec) * 
                get_ra_transition(pole.ra);
     }
-
+    
     matrix_t make_inverse_transition_matrix(coord_t pole, float ra_offset) {
         return get_ra_transition_inverse(pole.ra) * 
                get_dec_transition_inverse(pole.dec) * 

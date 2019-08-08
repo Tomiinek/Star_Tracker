@@ -60,6 +60,9 @@ class MountController {
     // IS RUNNING FOR A LONG TIME AND/OR THE MOUNT IS VERY POORLY CALIBRATED (i.e. its pole is at 45 DEC)
     void set_tracking();
 
+    // moves the mount to 0, 0 in local coordinates
+    void set_parking();
+
     // stops all motors immediately
     void stop_all() { _motors.stop(); _is_tracking = false; }
 

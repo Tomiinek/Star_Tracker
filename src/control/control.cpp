@@ -99,6 +99,11 @@ void Control::main_menu() {
     if (_keypad.pressed(C_TRACKING))     	_mount.set_tracking();
     else if (_keypad.pushed(C_GOTO))     	change_state(GOTO);
     else if (_keypad.pushed(C_POSITION)) 	change_state(POSITION);
+    else if (_keypad.pushed(C_PARKING)) {
+        _camera.reset();
+        _mount.stop_all();
+        _mount.set_parking();
+    }
     else if (_keypad.pushed(C_BRIGHTNESS))  change_state(BRIGHT);	
     else if (_keypad.pushed(C_SHOOT))       _camera.shoot(_shooting_time_buffer, _shooting_delay_buffer);
     else if (_keypad.pressed(C_CALIBRATION)) {		

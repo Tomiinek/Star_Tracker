@@ -317,6 +317,14 @@ void MountController::set_tracking() {
     _is_tracking = true;
 }
 
+void MountController::set_parking() {
+
+    float dec_revs_done, ra_revs_done;
+    _motors.get_made_revolutions(dec_revs_done, ra_revs_done);
+    
+    _motors.fast_turn(-dec_revs_done, -ra_revs_done, false);
+}
+
 MountController::coord_t MountController::get_ra_speed_transform(deg_t ra_speed, float t, coord_t point, coord_t pole, deg_t ra_offset) {
 
     // Ugly and hardcoded derivative :-(

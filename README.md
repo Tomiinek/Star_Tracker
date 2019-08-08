@@ -14,6 +14,7 @@ See [future work](#future-work) for missing features (like communication via USB
 * **Automatic pointing** at predefined coordinates.
 * Onboard **catalogue of deep sky objects** (the one which is present in Stellarium), so you can search thousands of Messier, Caldwell and NGC objects.
 * Precise **tracking** (for any type of mount).
+* **Parking** to default position.
 * **Calibration** of **mount pole** which works similarly to All-Star polar alignement.
 * **Camera control** which alows you to take photos with predefined exposure time and with a predefined period.
 * **Wireless control** via IR remote control.

@@ -90,7 +90,7 @@ void Display::render_help(bool refresh, ControlSubState phase) {
     else if(phase == S7) {
         _lcd.print(F("6 .......... NGC")); 
         _lcd.setCursor(0, 1);
-        _lcd.print(F("                "));
+        _lcd.print(F("0 ...... Parking"));
     }
     else if(phase == S8) {
         _lcd.print(F("8 ... Brightness"));

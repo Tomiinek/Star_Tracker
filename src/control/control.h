@@ -20,19 +20,20 @@
 // 	\=======================================================/
 
 #define C_ARROW_UP 				KP_KEY_UP_ARROW
-#define C_ARROW_LEFT			KP_KEY_LEFT_ARROW
-#define C_ARROW_RIGHT			KP_KEY_RIGHT_ARROW
-#define C_ARROW_DOWN      		KP_KEY_DOWN_ARROW     
+#define C_ARROW_LEFT            KP_KEY_LEFT_ARROW
+#define C_ARROW_RIGHT           KP_KEY_RIGHT_ARROW
+#define C_ARROW_DOWN            KP_KEY_DOWN_ARROW     
 #define C_ENTER					KP_KEY_OK
 #define C_EXIT					KP_KEY_HASH
 #define C_SHOOT					KP_KEY_STAR
 #define C_TRACKING				KP_KEY_OK		// just pressed
 #define C_GOTO					KP_KEY_1
 #define C_POSITION				KP_KEY_2
-#define C_CALIBRATION     		KP_KEY_3    	
+#define C_PARKING				KP_KEY_0
+#define C_CALIBRATION           KP_KEY_3    	
 #define C_CAMERA				KP_KEY_7
 #define C_TIME					KP_KEY_9
-#define C_BRIGHTNESS			KP_KEY_8
+#define C_BRIGHTNESS            KP_KEY_8
 #define C_MESSIER				KP_KEY_4
 #define C_CALDWELL				KP_KEY_5
 #define C_NGC					KP_KEY_6

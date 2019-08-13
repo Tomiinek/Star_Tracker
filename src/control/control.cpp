@@ -164,7 +164,7 @@ void Control::goto_menu() {
         auto coords = position_buffers_to_coords();
         _mount.stop_all();
         _camera.reset();
-        _mount.move_absolute(coords.ra, coords.dec);
+        _mount.move_absolute(coords.dec, coords.ra);
 
         return;
     }
@@ -363,7 +363,7 @@ void Control::calibration_menu() {
             _kernel = position_buffers_to_coords();							
             _mount.stop_all();
             _camera.reset();
-            _mount.move_absolute(_kernel.ra, _kernel.dec);
+            _mount.move_absolute(_kernel.dec, _kernel.ra);
         }
 
         change_substate(S8);

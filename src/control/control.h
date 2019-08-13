@@ -135,8 +135,8 @@ class Control {
 
         inline MountController::coord_t position_buffers_to_coords() {
             return MountController::coord_t {
-                 _ra_buffer[0] +  _ra_buffer[1] / 60.0f +  _ra_buffer[2] / 3600.0f,
                 _dec_buffer[0] + _dec_buffer[1] / 60.0f + _dec_buffer[2] / 3600.0f,
+                15.0f * (_ra_buffer[0] +  _ra_buffer[1] / 60.0f +  _ra_buffer[2] / 3600.0f),
             };
         }
 

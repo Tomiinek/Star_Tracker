@@ -175,8 +175,8 @@ void MountController::move_absolute_J2000(deg_t angle_dec, deg_t angle_ra) {
     float c = to_rad(angle_dec);
     
     auto dt = Clock::get_time();
-    float t = ((float)dt.secondstime() / 31557600.0f - 2000) / 100.0f;
-    
+    float t = (float)dt.secondstime() / 31557600.0f / 100.0f;
+
     float M = to_rad(1.2812323f * t + 0.0003879f * t * t + 0.0000101f * t * t * t);
     float N = to_rad(0.5567530f * t - 0.0001185f * t * t - 0.0000116f * t * t * t);
     

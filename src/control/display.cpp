@@ -34,7 +34,7 @@ void Display::initialize(int brightness) {
     render_wait(true);
 
     _lcd.setCursor(0, 1); 
-    _lcd.print(F("Press # for help")); 
+    _lcd.print(F("Press E for help")); 
 
     delay(2000);
 }
@@ -63,39 +63,39 @@ void Display::render_help(bool refresh, ControlSubState phase) {
         _lcd.print(F("Ent .. Precision"));
     }
     else if(phase == S2) {
-        _lcd.print(F("* .... Cam.shoot"));
+        _lcd.print(F("F .... Cam.shoot"));
         _lcd.setCursor(0, 1);
-        _lcd.print(F("7 . Cam.settings"));
+        _lcd.print(F("6 . Cam.settings"));
     }
     else if(phase == S3) {
-        _lcd.print(F("#  Stop Sh/Tr/Mv"));
+        _lcd.print(F("E  Stop Sh/Tr/Mv"));
         _lcd.setCursor(0, 1);
-        _lcd.print(F("# long .... Help"));
+        _lcd.print(F("E long .... Help"));
     }
     else if(phase == S4) {
-        _lcd.print(F("1 ......... GoTo"));
+        _lcd.print(F("D ......... GoTo"));
         _lcd.setCursor(0, 1);
-        _lcd.print(F("2 .... Show pos."));
+        _lcd.print(F("A .... Show pos."));
     }
     else if(phase == S5) {
-        _lcd.print(F("3 .. Calibration"));
+        _lcd.print(F("C .. Calibration"));
         _lcd.setCursor(0, 1);
-        _lcd.print(F("3 long Load cal."));
+        _lcd.print(F("C long Load cal."));
     }
     else if(phase == S6) {
-        _lcd.print(F("4 ...... Messier"));
+        _lcd.print(F("3 ...... Messier"));
         _lcd.setCursor(0, 1);
-        _lcd.print(F("5 ..... Caldwell"));
+        _lcd.print(F("2 ..... Caldwell"));
     }
     else if(phase == S7) {
-        _lcd.print(F("6 .......... NGC")); 
+        _lcd.print(F("1 .......... NGC")); 
         _lcd.setCursor(0, 1);
         _lcd.print(F("0 ...... Parking"));
     }
     else if(phase == S8) {
-        _lcd.print(F("8 ... Brightness"));
+        _lcd.print(F("B ... Brightness"));
         _lcd.setCursor(0, 1);
-        _lcd.print(F("9 .. Time config"));
+        _lcd.print(F("5 .. Time config"));
     }
     else if(phase == S9) {
         _lcd.print(F("Use long 0 press"));
@@ -335,7 +335,7 @@ void Display::render_calibration_alignment(bool refresh, ControlSubState phase) 
         _lcd.print(F("Aim! Use arrows")); 
 
         _lcd.setCursor(0, 1); 
-        _lcd.print(F("Confirm (*)"));
+        _lcd.print(F("Confirm (cal.k.)"));
     }
 
     if (millis() - _last_refresh > DSP_REFRESH_MS || refresh) {

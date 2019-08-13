@@ -36,7 +36,7 @@ See [future work](#future-work) for missing features (like communication via USB
 * **16×2 LCD** (without I2C module)
 * **10k Potentiometer**
 * **IR receiver**
-* **Remote control**, you can use your favourite one you use for TV or you can use any other for makers! 
+* **Remote control**, you can use your favourite one you use for TV or you can use any other for makers! This repo settings match with a [remote control](https://www.makeblock.com/project/me-ir-remote-controller) by Makeblock. 
 * Some kind of **transistor**, e. g. *BC337* and suitable resistor, e. g. *1k ohms* 
 * **Bunch of wires and connectors**
 
@@ -95,9 +95,13 @@ void setup(){
 }
 
 void loop(){
-    if (ir.decode(&results)) delay(5);
+    if (!ir.decode(&results)) {
+      delay(5);
+      return;
+    }
     Serial.println(results.value, HEX);
     ir.resume();
+    delay(500);
 }
 ```
 

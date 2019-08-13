@@ -335,7 +335,7 @@ void Control::calibration_menu() {
       
         _display.render_calibration_alignment(_last_substate_changed, _substate);	
 
-        if (_keypad.pushed(C_CALIBRATION_CONFIRM)) {
+        if (_keypad.pushed(C_CALIBRATION)) {
 
             _mount.stop_all();
 

@@ -3,23 +3,27 @@
 
 #include <IRremote.h>
 
-#define KP_KEY_1             0xFF6897 
-#define KP_KEY_2             0xFF9867
-#define KP_KEY_3             0xFFB04F 
-#define KP_KEY_4             0xFF30CF  
-#define KP_KEY_5             0xFF18E7 
-#define KP_KEY_6             0xFF7A85  
-#define KP_KEY_7             0xFF10EF  
-#define KP_KEY_8             0xFF38C7 
-#define KP_KEY_9             0xFF5AA5 
-#define KP_KEY_0             0xFF4AB5 
-#define KP_KEY_STAR          0xFF42BD  
-#define KP_KEY_HASH          0xFF52AD  
-#define KP_KEY_UP_ARROW      0xFF629D  
-#define KP_KEY_DOWN_ARROW    0xFFA857 
-#define KP_KEY_RIGHT_ARROW   0xFFC23D
-#define KP_KEY_LEFT_ARROW    0xFF22DD
-#define KP_KEY_OK            0xFF02FD
+#define KP_KEY_A             0xFFA25D
+#define KP_KEY_B             0xFF629D
+#define KP_KEY_C             0xFFE21D
+#define KP_KEY_D             0xFF22DD  
+#define KP_KEY_E             0xFFC23D 
+#define KP_KEY_F             0xFFB04F
+#define KP_KEY_1             0xFF30CF 
+#define KP_KEY_2             0xFF18E7
+#define KP_KEY_3             0xFF7A85
+#define KP_KEY_4             0xFF10EF  
+#define KP_KEY_5             0xFF38C7 
+#define KP_KEY_6             0xFF5AA5  
+#define KP_KEY_7             0xFF42BD  
+#define KP_KEY_8             0xFF4AB5 
+#define KP_KEY_9             0xFF52AD
+#define KP_KEY_0             0xFF6897 
+#define KP_KEY_UP_ARROW      0xFF02FD  
+#define KP_KEY_DOWN_ARROW    0xFF9867 
+#define KP_KEY_RIGHT_ARROW   0xFF906F
+#define KP_KEY_LEFT_ARROW    0xFFE01F
+#define KP_KEY_OK            0xFFA857
 
 #define KP_UPDATE_MS         200     
 

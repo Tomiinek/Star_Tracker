@@ -73,13 +73,13 @@ At first, **make sure you have already installed all the libraries**.
 
 #### 1. General configuration
 
-Next, you should **modify the `src/config.h` file to fit your needs**. Familiarize yourself with all the definitions in the file. **You should definitely change `LONGITUDE`, `LATITUDE`, `REDUCTION_RATIO_xx` and `DEG_PER_MOUNT_REV_xx` variables!** You also need to change `DEFAULT_POLE_xx` if you use an altazimuthal mount.
+Next, you should **modify** the `src/config.h` file to fit your needs. Familiarize yourself with all the definitions in the file. You should **definitely change** `LONGITUDE`, `LATITUDE`, `REDUCTION_RATIO_xx` and `DEG_PER_MOUNT_REV_xx` variables! You also need to change `DEFAULT_POLE_xx` if you use an altazimuthal mount.
 
-You may encounter a problem with stucked motors. In that case, I **advice you to adjust `ACCEL_STEPS_xx`, `ACCEL_DELAY_xx`, `FAST_DELAY_START_xx` and `FAST_DELAY_END_xx`**. Change these definitions in order to change motors speed or ac/deceleration.
+You may encounter a problem with **stucked motors**. In that case, I advice you to **adjust** `ACCEL_STEPS_xx`, `ACCEL_DELAY_xx`, `FAST_DELAY_START_xx` and `FAST_DELAY_END_xx`. Change these definitions in order to change motors speed or ac/deceleration.
 
 #### 2. Remote control
 
-You need to **change definitions of key codes** to fit the protocol used by your favourite remote control. Take **look at the beginning of the `src/keypad.h` file**. There are few definitions of `KP_KEY_xx` where `xx` describes the particular key. To figure out **codes used by your remote control**, upload the following sketch to your Arduino:
+You need to **change definitions of key codes** to fit the protocol used by your favourite remote control. Take look **at the beginning** of the `src/keypad.h` file. There are few definitions of `KP_KEY_xx` where `xx` describes the particular key. To figure out **codes used by your remote control**, upload the following sketch to your Arduino:
 
 ```
 #include <Arduino.h>
@@ -115,11 +115,11 @@ Take an **empty and formatted microSD** card and **copy there the content** of t
 
 #### 4. Real Time Clock
 
-The `src/rtc_ds3231.h` file contains implementation of `Clock` class for `DS3231` module. In case you use **other module** or you want to obtain time from NTP servers, **implement the `Clock` interface** and change some lines in `Star_Tracker.ino`.
+The `src/rtc_ds3231.h` file contains implementation of `Clock` class for `DS3231` module. In case you use **other module** or you want to obtain time from NTP servers, **implement** the `Clock` interface and change some lines in `Star_Tracker.ino`.
 
 #### 5. Camera trigger
 
-Similarly, you may need to change the implementation of the camera trigger control. The `src/CanonEOS1000D.h` file contains implementation of `CameraController` class for *Canon EOS1000D*. If you have other camera with **other trigger logic**, you should **create a new implementation of `CameraController`** and change some lines at `Star_Tracker.ino`. Note that in this case, you may also need a different wiring!
+Similarly, you may need to change the implementation of the camera trigger control. The `src/CanonEOS1000D.h` file contains implementation of `CameraController` class for *Canon EOS1000D*. If you have other camera with **other trigger logic**, you should **create a new implementation** of `CameraController` and change some lines at `Star_Tracker.ino`. Note that in this case, you may also need a different wiring!
 
 ## Notes on precision
 

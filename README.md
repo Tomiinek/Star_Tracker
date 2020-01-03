@@ -22,7 +22,7 @@ See [future work](#future-work) for missing features (like communication via USB
 
 ## Hardware setup
 
-#### What you will need:
+#### 0. What you will need:
 * **Arduino MEGA2560**, unfortunately Arduino Uno cannot be used due to the lack of memory
 * **Power supply** or battery, e.g. *12V* and around *2.5A* (depends on your stepper motors)
 * *2×* **NEMA 17** stepper motor (forget about 28BYJ!)
@@ -40,25 +40,25 @@ See [future work](#future-work) for missing features (like communication via USB
 * Some kind of **transistor**, e. g. *BC337* and suitable resistor, e. g. *1k ohms* 
 * **Bunch of wires and connectors**
 
-#### Parts modification and tuning
+#### 1. Parts modification and tuning
 
-You should add the four resistors between `STEP`-`GND` and `DIR`-`GND` pins to avoid a jitter of stepper motors at startup. 
+You should **add** the four **resistors** between `STEP`-`GND` and `DIR`-`GND` pins **to avoid a jitter** of stepper motors at startup. 
 
-A typical extender for A4988 has an `ENABLE` pin, however, we do not need it. Instead, we need a pin for controlling microstepping. That is why you should hardwire the three microstepping pins and you should add a single pin to control them. Search for *microstepping resolution truth table* of A4988.
+A typical extender for A4988 has an `ENABLE` pin, however, we do not need it. Instead, we **need a pin for controlling microstepping**. That is why you should hardwire the three microstepping pins and you should add a single pin to control them. Search for *microstepping resolution truth table* of A4988.
 
-A cheap IR remote control might have a weak diode. In that case, you won't be able to control the mount from a distant places. So I recommend you to replace the diode with a better one.  
+A **cheap IR remote control** might have a **weak diode**. In that case, you won't be able to control the mount from a distant places. So I recommend you to **replace the diode with a better one.**  
 
-You also need to tune potentiometers of stepper drivers. Search for *How to set output current limit on A4988 stepper driver*. This can reduce noise produced by the motors or you can remove problems with skipping of steps. 
+You also need to **tune potentiometers of stepper drivers**. Search for *How to set output current limit on A4988 stepper driver*. This can reduce noise produced by the motors or you can remove **problems with skipping of steps**. 
 
-Use the potentiometer connected to the LCD to adjust contrast.
+Use the **potentiometer** connected to the LCD to **adjust contrast**.
 
-#### Wiring
+#### 2. Wiring
 
-![Wiring diagram](_img/wiring.png)
+![Wiring diagram](https://github.com/Tomiinek/Star_Tracker/blob/master/_img/wiring.png)
 
 ## Software Settings & Uploding to Arduino
 
-#### Prepearing libraries
+#### 0. Prepearing libraries
 
 The following list contains libraries you will need to sucessfuly compile the Star Tracker project (most of them is included in the Arduino IDE by default):
 
@@ -69,17 +69,17 @@ The following list contains libraries you will need to sucessfuly compile the St
 * [Wire](https://www.arduino.cc/en/Reference/Wire)
 * [EEPROM](https://www.arduino.cc/en/Reference/EEPROM)
 
-At first, make sure you have already installed all the libraries.
+At first, **make sure you have already installed all the libraries**.
 
-#### General configuration
+#### 1. General configuration
 
-Next, you should modify the `src/config.h` file to fit your needs. Familiarize yourself with all the definitions in the file. You should definitely change `LONGITUDE`, `LATITUDE`, `REDUCTION_RATIO_xx` and `DEG_PER_MOUNT_REV_xx` variables! You   also need to change `DEFAULT_POLE_xx` if you use an altazimuthal mount.
+Next, you should **modify** the `src/config.h` file to fit your needs. Familiarize yourself with all the definitions in the file. You should **definitely change** `LONGITUDE`, `LATITUDE`, `REDUCTION_RATIO_xx` and `DEG_PER_MOUNT_REV_xx` variables! You also need to change `DEFAULT_POLE_xx` if you use an altazimuthal mount.
 
-You may encounter a problem with stucked motors. In that case, I advice you to adjust `ACCEL_STEPS_xx`, `ACCEL_DELAY_xx`, `FAST_DELAY_START_xx` and `FAST_DELAY_END_xx`. Change these definitions in order to change motors speed or ac/deceleration.
+You may encounter a problem with **stucked motors**. In that case, I advice you to **adjust** `ACCEL_STEPS_xx`, `ACCEL_DELAY_xx`, `FAST_DELAY_START_xx` and `FAST_DELAY_END_xx`. Change these definitions in order to change motors speed or ac/deceleration.
 
-#### Remote control
+#### 2. Remote control
 
-You need to change definitions of key codes to fit the protocol used by your favourite remote control. Take look at the beginning of the `src/keypad.h` file. There are few definitions of `KP_KEY_xx` where `xx` describes the particular key. To figure out codes used by your remote control, upload the following sketch to your Arduino:
+You need to **change definitions of key codes** to fit the protocol used by your favourite remote control. Take look **at the beginning** of the `src/keypad.h` file. There are few definitions of `KP_KEY_xx` where `xx` describes the particular key. To figure out **codes used by your remote control**, upload the following sketch to your Arduino:
 
 ```
 #include <Arduino.h>
@@ -105,21 +105,21 @@ void loop(){
 }
 ```
 
-Then open the Serial monitor and observe the key codes of pressed keys. Note that you will receive `0xFFFFFFFF` when you hold a key continuously.
+Then **open the Serial monitor** and **observe the key codes** of pressed keys. Note that you will receive `0xFFFFFFFF` when you hold a key continuously.
 
-You can also change mapping of these keys to particular actions in the `src/control.h` file (but be careful as these keys and actions should not cause conflicts and ambiguity).
+You can also **change mapping of these keys to particular actions** in the `src/control.h` file (but be careful as these keys and actions should not cause conflicts and ambiguity).
 
-#### SD card and catalogue
+#### 3. SD card and catalogue
 
-Take an empty and formatted microSD card and copy there the content of the `SD` directory. It should be a single file `catalog.csv` which is a limited version of Stellarium catalogue of deep space objects. You can delete or add object to this file, however the structure and meaning of columns should be preserved.
+Take an **empty and formatted microSD** card and **copy there the content** of the `SD` directory. It should be a single file `catalog.csv` which is a limited version of **Stellarium catalogue of deep space objects**. You can delete or add object to this file, however the structure and meaning of columns should be preserved.
 
-#### Real Time Clock
+#### 4. Real Time Clock
 
-The `src/rtc_ds3231.h` file contains implementation of `Clock` class for `DS3231` module. In case you use another module or you want to obtain time from NTP servers, implement the `Clock` interface and change some lines in `Star_Tracker.ino`.
+The `src/rtc_ds3231.h` file contains implementation of `Clock` class for `DS3231` module. In case you use **other module** or you want to obtain time from NTP servers, **implement** the `Clock` interface and change some lines in `Star_Tracker.ino`.
 
-#### Camera trigger
+#### 5. Camera trigger
 
-Similarly, you may need to change the implementation of the camera trigger control. The `src/CanonEOS1000D.h` file contains implementation of `CameraController` class for *Canon EOS1000D*. If you have another camera with other trigger logic, you should create a new implementation of `CameraController` and change some lines at `Star_Tracker.ino`. Note that in this case, you may also need a different wiring!
+Similarly, you may need to change the implementation of the camera trigger control. The `src/CanonEOS1000D.h` file contains implementation of `CameraController` class for *Canon EOS1000D*. If you have other camera with **other trigger logic**, you should **create a new implementation** of `CameraController` and change some lines at `Star_Tracker.ino`. Note that in this case, you may also need a different wiring!
 
 ## Notes on precision
 

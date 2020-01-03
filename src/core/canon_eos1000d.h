@@ -11,13 +11,13 @@ class CanonEOS1000D : public CameraController {
         void shoot(int duration_seconds, int delay_seconds) override {
             if (update()) return;
             if (_repeating) _repeating_invoked = true;
-            shoot_internal(duration_seconds * 1000, delay_seconds * 1000);
+            shoot_internal(duration_seconds * 1000L, delay_seconds * 1000L);
         }
 
         void shoot_internal(unsigned long duration_ms, unsigned long delay_ms) {
             digitalWrite(TRIGGER_PIN, HIGH);
             _last_delay = delay_ms ;
-            _last_duration = duration_ms ;
+            _last_duration = duration_ms;
             _last_invoked = millis();
         }
 

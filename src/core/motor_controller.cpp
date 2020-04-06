@@ -200,7 +200,7 @@ void MotorController::step_micros(motor_data& data, long pulses, unsigned long m
 
     data.pulses_to_correct = 0;
     float err = mcu_ticks_per_pulse - data.mcu_ticks_per_pulse;
-    if (err = 0.0) data.pulses_to_correct = 0;
+    if (err == 0.0) data.pulses_to_correct = 0;
     else data.pulses_to_correct = 1.0 / err;
 
     #ifdef DEBUG

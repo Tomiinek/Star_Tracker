@@ -80,12 +80,11 @@ class Keypad {
 
         uint32_t get_key() {
 
-            decode_results results;
-            if (!_recv.decode(&results)) return 0;
+            if (!_recv.decode()) return 0;
 
             _recv.resume();
 
-            return (results.value == 0xFFFFFFFF ? _used_key : results.value) ;
+            return (results.results.value == 0xFFFFFFFF ? _used_key : results.results.value);
         }
 
         IRrecv _recv;

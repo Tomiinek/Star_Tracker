@@ -87,7 +87,6 @@ You need to **change definitions of key codes** to fit the protocol used by your
 #include "src/config.h"
 
 IRrecv ir(KEYPAD_IR_PIN);
-decode_results results;
 
 void setup(){
     Serial.begin(9600);
@@ -95,11 +94,11 @@ void setup(){
 }
 
 void loop(){
-    if (!ir.decode(&results)) {
+    if (!ir.decode()) {
       delay(5);
       return;
     }
-    Serial.println(results.value, HEX);
+    Serial.println(ir.results.value, HEX);
     ir.resume();
     delay(500);
 }
